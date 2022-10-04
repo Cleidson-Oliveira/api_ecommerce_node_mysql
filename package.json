@@ -1,0 +1,20 @@
+{
+  "name": "api_ecommerce",
+  "version": "1.0.0",
+  "description": "Api para ecommerce usando NodeJS e MySQL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/index.js"
+  },
+  "author": "Cleidson Oliveira",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "mysql2": "^2.3.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
