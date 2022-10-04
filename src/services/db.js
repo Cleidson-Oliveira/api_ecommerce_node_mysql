@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 function conectar(){
     const mysql = require('mysql2/promise');
 
@@ -13,6 +11,8 @@ function conectar(){
     return connection;
 }
 
+// CRUD USER
+
 const createUser = async (data) => {
     const con = await conectar();
 
@@ -21,7 +21,7 @@ const createUser = async (data) => {
 
     const [ UserCreatedData ] = await con.query(sql, values);
 
-    return { UserCreatedData, user: data}
+    return { UserCreatedData, user: data};
 }
 
 const getUsers = async (id = null) => {
@@ -55,13 +55,7 @@ const deleteUser = async (id) => {
     return deletedUser;
 }
 
-
-
-
-
-
-
-
+// CRUD PRODUCTS
 
 const createProduct = async (data) => {
     const con = await conectar();
@@ -71,7 +65,7 @@ const createProduct = async (data) => {
 
     const [ productCreatedData ] = await con.query(sql, values);
 
-    return { productCreatedData, product: data}
+    return { productCreatedData, product: data};
 }
 
 const getProducts = async (id = null) => {
