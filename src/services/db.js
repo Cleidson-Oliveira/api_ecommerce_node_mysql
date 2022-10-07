@@ -72,11 +72,11 @@ const handlerProducts = {
         
         return productData;
     },
-    update: async (data) => {
+    update: async (data, id) => {
         const con = await conectar();
     
         const sql = `UPDATE products SET name_product=?, desc_product=?, price_cents_product=?, stock_product=? WHERE id_product = ?`;
-        const values =  [data.name, data.desc, data.price, data.stock, data.id];
+        const values =  [data.name, data.desc, data.price, data.stock, id];
     
         const [ productUpdatedData ] = await con.query(sql, values);
     
@@ -85,9 +85,9 @@ const handlerProducts = {
     delete: async (id) => {
         const con = await conectar();
     
-        const sql = `DELETE FROM products WHERE id_product = ${id}`;
+        const sql = `DELETE FROM products WHERE id_product = (?)`;
     
-        const [ productDeleted ] = await con.query(sql);
+        const [ productDeleted ] = await con.query(sql, [id]);
     
         return productDeleted;
     }

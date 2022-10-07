@@ -10,9 +10,14 @@ const clientErrorMessages = {
     "notfound" : "There isn't the specificated client!",
     "cpfAlreadyExists": "The CPF number already exists!",
 }
+const productErrorMessages = {
+    "notfound" : "There isn't the specificated product!",
+
+}
 
 module.exports = {
     generalErrorMessages,
     orderErrorMessages,
     clientErrorMessages,
+    productErrorMessages
 }
