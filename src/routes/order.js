@@ -59,7 +59,7 @@ router.post('/', async (req, res) => {
     
   } catch (err) {
 
-    if (/REFERENCED/.test(err.code)) {
+    if (err.errno == 1451 | err.errno == 1452) {
       res.status(400).json({"error": orderErrorMessages.invalidClientIdOrProductId});
     } else {
       res.status(500).json({"error": err});
@@ -68,26 +68,63 @@ router.post('/', async (req, res) => {
 
 })
 
-router.put('/', async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    const updatedOrder = await handlerOrders.update(req.body);
-    res.json(updatedOrder);
+    const id = parseInt(req.params.id);
+
+    if (id <= 0) {
+      throw new RangeError(orderErrorMessages.invalidIdValue);
+    }
+    if (!id) {
+      throw new TypeError(orderErrorMessages.invalidIdType);
+    }
+
+    const updatedOrder = await handlerOrders.update(req.body, id);
+    res.status(200).json(updatedOrder);
     
   } catch (err) {
-    console.log(err);
+    const invalidIdValueOrType = err.message === orderErrorMessages.invalidIdValue | err.message === orderErrorMessages.invalidIdType;
+    
+    if (err.errno == 1451 | err.errno == 1452) {
+      res.status(400).json({"error": orderErrorMessages.invalidClientIdOrProductId});
+    } else if (invalidIdValueOrType) {
+      res.status(400).json({"error": err.message});
+    } else {
+      res.status(500).json({"error": err});
+    }
   }
 
 })
 
-router.delete('/', async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
-    const id = parseInt(req.query.id);
+    const id = parseInt(req.params.id);
+
+    if (id <= 0) {
+      throw new RangeError(orderErrorMessages.invalidIdValue);
+    }
+    if (!id) {
+      throw new TypeError(orderErrorMessages.invalidIdType);
+    }
 
     const deletedOrder = await handlerOrders.delete(id);
-    res.json(deletedOrder);
+
+    if (deletedOrder.affectedRows === 0) {
+      throw new Error(orderErrorMessages.notfound)
+    }
+
+    res.status(200).json(deletedOrder);
     
   } catch (err) {
-    console.log(err);
+    const invalidIdValueOrType = err.message === orderErrorMessages.invalidIdValue | err.message === orderErrorMessages.invalidIdType;
+    
+    if (invalidIdValueOrType) {
+      res.status(400).json({"error": err.message});
+    } else if (err.message === orderErrorMessages.notfound) {
+      res.status(404).json({"error": orderErrorMessages.notfound})
+    } else {
+      res.status(500).json({"error": err});
+    }
   }
 
 })

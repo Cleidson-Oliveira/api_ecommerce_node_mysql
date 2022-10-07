@@ -114,11 +114,11 @@ const handlerOrders = {
         
         return orderData;
     },
-    update: async (data) => {
+    update: async (data, id) => {
         const con = await conectar();
     
         const sql = `UPDATE orders SET client=?, product=? WHERE id_order = ?`;
-        const values =  [data.client, data.product, data.id];
+        const values =  [data.client, data.product, id];
     
         const [ orderUpdated ] = await con.query(sql, values);
     
@@ -127,9 +127,9 @@ const handlerOrders = {
     delete: async (id) => {
         const con = await conectar();
     
-        const sql = `DELETE FROM ordre WHERE id_order = ${id}`;
+        const sql = `DELETE FROM orders WHERE id_order = ?`;
     
-        const [ orderDeleted ] = await con.query(sql);
+        const [ orderDeleted ] = await con.query(sql, [id]);
     
         return orderDeleted;
     }
