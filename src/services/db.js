@@ -31,11 +31,11 @@ const handlerUsers = {
         
         return userData;
     },
-    update: async (data) => {
+    update: async (data, id) => {
         const con = await conectar();
 
         const sql = `UPDATE clients SET name_client=?, cpf_client=?, gender_client=?, birth_date_client=?, address_client=? WHERE id_client = ?`;
-        const values = [data.name, data.cpf, data.gender, data.birthDate, data.address, data.id];
+        const values = [data.name, data.cpf, data.gender, data.birthDate, data.address, id];
 
         const [ userUpdatedData ] = await con.query(sql, values);
 

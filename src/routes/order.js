@@ -1,7 +1,8 @@
 const router = require('express').Router();
 
 const { handlerOrders } = require('../services/db');
-const { orderErrorMessages } = require('../utils/error_messages');
+const { orderErrorMessages, generalErrorMessages } = require('../utils/error_messages');
+const verifyId = require('../utils/verifyId');
 
 router.get('/', async (req, res) => {
   try {
@@ -16,16 +17,9 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    verifyId(req.params.id);
     
-    if (id <= 0) {
-      throw new RangeError(orderErrorMessages.invalidIdValue);
-    }
-    if (!id) {
-      throw new TypeError(orderErrorMessages.invalidIdType);
-    }
-    
-    const orders = await handlerOrders.get(id);
+    const orders = await handlerOrders.get(req.params.id);
 
     if (orders.length === 0) {
       throw new Error(orderErrorMessages.notfound);
@@ -38,8 +32,8 @@ router.get('/:id', async (req, res) => {
       case orderErrorMessages.notfound:
         res.status(404).json({"error": err.message});
       break;
-      case orderErrorMessages.invalidIdType:
-      case orderErrorMessages.invalidIdValue:
+      case generalErrorMessages.invalidIdType:
+      case generalErrorMessages.invalidIdValue:
         res.status(400).json({"error": err.message});
       break;
     
@@ -70,20 +64,13 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    verifyId(req.params.id);
 
-    if (id <= 0) {
-      throw new RangeError(orderErrorMessages.invalidIdValue);
-    }
-    if (!id) {
-      throw new TypeError(orderErrorMessages.invalidIdType);
-    }
-
-    const updatedOrder = await handlerOrders.update(req.body, id);
+    const updatedOrder = await handlerOrders.update(req.body, req.params.id);
     res.status(200).json(updatedOrder);
     
   } catch (err) {
-    const invalidIdValueOrType = err.message === orderErrorMessages.invalidIdValue | err.message === orderErrorMessages.invalidIdType;
+    const invalidIdValueOrType = err.message === generalErrorMessages.invalidIdValue | err.message === generalErrorMessages.invalidIdType;
     
     if (err.errno == 1451 | err.errno == 1452) {
       res.status(400).json({"error": orderErrorMessages.invalidClientIdOrProductId});
@@ -98,16 +85,9 @@ router.put('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    verifyId(req.params.id);
 
-    if (id <= 0) {
-      throw new RangeError(orderErrorMessages.invalidIdValue);
-    }
-    if (!id) {
-      throw new TypeError(orderErrorMessages.invalidIdType);
-    }
-
-    const deletedOrder = await handlerOrders.delete(id);
+    const deletedOrder = await handlerOrders.delete(req.params.id);
 
     if (deletedOrder.affectedRows === 0) {
       throw new Error(orderErrorMessages.notfound)
@@ -116,7 +96,7 @@ router.delete('/:id', async (req, res) => {
     res.status(200).json(deletedOrder);
     
   } catch (err) {
-    const invalidIdValueOrType = err.message === orderErrorMessages.invalidIdValue | err.message === orderErrorMessages.invalidIdType;
+    const invalidIdValueOrType = err.message === generalErrorMessages.invalidIdValue | err.message === generalErrorMessages.invalidIdType;
     
     if (invalidIdValueOrType) {
       res.status(400).json({"error": err.message});
