@@ -4,7 +4,6 @@
     "description": "Api para ecommerce usando NodeJS e MySQL",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "nodemon src/index.js"
     },
     "author": "Cleidson Oliveira",

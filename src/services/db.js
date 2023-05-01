@@ -1,6 +1,6 @@
 const { orderErrorMessages, clientErrorMessages, productErrorMessages } = require("../utils/error_messages");
 
-function conectar(){
+const conectar = () => {
 	const mysql = require("mysql2/promise");
 
 	const connection = mysql.createConnection({
@@ -11,7 +11,7 @@ function conectar(){
 	});
 
 	return connection;
-}
+};
 
 const handlerUsers = {
 	create: async (data) => {
